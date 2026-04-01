@@ -32,18 +32,19 @@ const getListaDeEstados = function(){
 
 //Função para a descrição do estado tendo como critério de filtro a sigla
 const getDadosEstados = function(siglaDoEstado){
+        let descricaoDoEstadoJson = false
         dados.listaDeEstados.estados.forEach(function(item){
             if(String(siglaDoEstado).toUpperCase() == String(item.sigla).toUpperCase()){
-                const descricaoDoEstadoJson = {
+                descricaoDoEstadoJson = {
                     'UF': item.sigla,
                     'Descricao': item.nome,
                     'Capital': item.capital,
                     'Regiao': item.regiao
                 }
-                return descricaoDoEstadoJson
-            }else
-                return false
+            }
+             
         })
+        return descricaoDoEstadoJson
 }
 
 //Função para a descrição de uma capital do estado tendo como critério de filtro a sigla
@@ -120,4 +121,13 @@ const getCidades = function(siglaDoEstado){
         }else
             return false
     })
+}
+
+module.exports = {
+    getListaDeEstados,
+    getDadosEstados,
+    getCapitalEstados,
+    getEstadosRegiao,
+    getCapitalPais,
+    getCidades
 }
