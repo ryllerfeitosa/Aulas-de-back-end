@@ -50,34 +50,37 @@ const getDadosEstados = function(siglaDoEstado){
 //Função para a descrição de uma capital do estado tendo como critério de filtro a sigla
 const getCapitalEstados = function(siglaDoEstado){
     const dadosCapitalArray = []
+    let descricaoDaCapitalJson = false
         dados.listaDeEstados.estados.forEach(function(item){
             dadosCapitalArray.push(item)
             if(String(siglaDoEstado).toUpperCase() == String(item.sigla).toUpperCase()){
-                const descricaoDaCapitalJson = {
+                descricaoDaCapitalJson  = {
                     'UF': item.sigla, 'Descricao': item.nome, 'Capital': item.capital
                 }
-                return descricaoDaCapitalJson
-            }else
-                return false
+            }
         })
+        return descricaoDaCapitalJson
 }
 
 //Função para filtrar os estados de acordo com a região
 const getEstadosRegiao = function(regiao){
-    const descricaoDaRegiaoJson = {
-        'Regiao': regiao.toUpperCase(),
-        'Estados': []
-    }
+    let descricaoDaRegiaoJson = false
+    let condicao = false
     dados.listaDeEstados.estados.forEach(function(item){
         if(String(regiao).toUpperCase() == String(item.regiao).toUpperCase()){
+            if(!condicao){
+                descricaoDaRegiaoJson = {
+                    'Regiao': regiao.toUpperCase(),
+                    'Estados': []
+                }
+                condicao = true
+            }
             descricaoDaRegiaoJson.Estados.push({
                 'UF': item.sigla,
                 'Descricao': item.nome
-            }) 
-        }else
-            return false
+            })
+        }
     })
-
     return descricaoDaRegiaoJson    
 }
 
@@ -106,21 +109,25 @@ const getCapitalPais = function(){
 //Função para exibir as cidades de um estado tendo como critério de filtro a sigla
 const getCidades = function(siglaDoEstado){
     const listarCidades = []
+    let cidadesDoEstado = false
+    let condicao = false
     dados.listaDeEstados.estados.forEach(function(item){
         if(String(item.sigla).toUpperCase() == String(siglaDoEstado).toUpperCase()){
             item.cidades.forEach(function(cidades){
             listarCidades.push(cidades.nome)
             })
-            const cidadesDoEstado = {
-                'Uf'                : item.sigla,
-                'Descricao'         : item.nome,
-                'Quantidade_cidades': item.cidades.length,
-                'Cidades'           : listarCidades 
+            if(!condicao){
+                cidadesDoEstado = {
+                    'Uf'                : item.sigla,
+                    'Descricao'         : item.nome,
+                    'Quantidade_cidades': item.cidades.length,
+                    'Cidades'           : listarCidades 
+                }
+                condicao = true                
             }
-            return cidadesDoEstado
-        }else
-            return false
+        }
     })
+    return cidadesDoEstado
 }
 
 module.exports = {

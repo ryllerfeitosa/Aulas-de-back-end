@@ -65,7 +65,78 @@ app.use(cors(corsOptions))
 
 const estadosCidades = require('./modulo/functions.js')
 
-//Criando EndPoints (pontos de parada) para a API
+/*Criando EndPoints (pontos de parada) para a API
+app.get('/v1/senai/cidades', function(request, response){
+response.status(200)    
+response.json({"Message": "Testando minha API de cidades"})
+})*/
+//Retorna dados de estados filtrando pelo UF
+app.get('/v1/senai/dados/estados/:uf', function(request, response){
+    /*
+        Para receber dados diretamente do front, utilizamos no nome do Endpoint o ':', isso indica que será
+        criado uma variável, o nome da variável é o que escrevemos logo após o ':'
+        Não inverter o request e o response, pois é uma função de callBack
+    */
+    let sigla = request.params.uf
+    let estado = estadosCidades.getDadosEstados(sigla)
+    if(estado){
+        response.status(200)
+        response.json(estado)
+    }else{
+        response.status(404)
+        response.json({"Message": "O estado informado não foi encontrado"})
+    }
+
+
+})
+//Retorna dados da capital do estado filtrando pelo UF
+app.get('/v1/senai/capital/estados/:uf', function(request, response){
+    let sigla = request.params.uf
+    let estado = estadosCidades.getCapitalEstados(sigla)
+    if(estado){
+        response.status(200)
+        response.json(estado)
+    }else{
+        response.status(404)
+        response.json({"Message": "O estado informado não foi encontrado"})
+    }
+})
+//Retorna dados do estados que foram capitais do Brasil
+app.get('/v1/senai/estados/capital/brasil', function(request, response){
+    let capital = estadosCidades.getCapitalPais()
+    if(capital){
+        response.status(200)
+        response.json(capital)
+    }else{
+        response.status(404)
+    }
+})
+//Retorna dados do estado filtrando pela região
+app.get('/v1/senai/estados/regiao/:regiao', function(request, response){
+    let filtro = request.params.regiao
+    let regiao = estadosCidades.getEstadosRegiao(filtro)
+    if(regiao){
+        response.status(200)
+        response.json(regiao)
+    }else{
+        response.status(404)
+        response.json({"Message": "Região não encontrada"})
+    }
+})
+//Retorna dados das cidades filtrando pelo UF
+app.get('/v1/senai/cidades/estados/:uf', function(request, response){
+    let sigla = request.params.uf
+    let cidades = estadosCidades.getCidades(sigla)
+
+    if(!cidades){
+        response.status(404)
+        response.json({"Message": "Estado não encontrado"})
+    }else{
+        response.status(200)
+        response.json(cidades)
+    }
+})
+//Retorna a lista de estados
 app.get('/v1/senai/estados', function(request, response){
     /*
         Sempre que o backEnd dar um response (enviar dados), sempre será enviado
@@ -84,24 +155,46 @@ app.get('/v1/senai/estados', function(request, response){
     */
 
     let estados = estadosCidades.getListaDeEstados()
+    response.status(200)
     response.json(estados)
-    response.status(200)
 })
 
-app.get('/v1/senai/cidades', function(request, response){
-    response.json({"Message": "Testando minha API de cidades"})
-    response.status(200)
-})
+app.get('/v1/senai/help', function(request, response){
+    let docAPI = {
+        "API-description": "API para manipular dados de estados e cidades",
+        "Date": "2026-04-02",
+        "Development": "Rillao the best",
+        "Version": "1.0",
+        "EndPoints": [
+            {   "id": 1, 
+                "Rota 1": "/v1/senai/estados", 
+                "obs": "Retorna a lista de todos os estados"
+            },
+            {   "id": 2, 
+                "Rota 2": "/v1/senai/dados/estados/sp", 
+                "obs": "Retorna os dados do estado filtrando pela sigla do estado"
+            },
+            {   "id": 3, 
+                "Rota 3": "/v1/senai/capital/estados/sp", 
+                "obs": "Retorna os dados da capital filtrando pela sigla do estado"
+            },
+            {   "id": 4, 
+                "Rota 4": "/v1/senai/estados/capital/brasil", 
+                "obs": "Retorna todos os estados que formaram capital do Brasil"
+            },
+            {   "id": 5, 
+                "Rota 5": "/v1/senai/estados/regiao/norte", 
+                "obs": "Retorna todos os estados referentes a uma região"
+            },
+            {   "id": 6, 
+                "Rota 6": "/v1/senai/cidades/estados/sp", 
+                "obs": "Retorna todos as cidades filtrando pela sigla do estado"
+            }
+        ] 
+    }
 
-app.get('/v1/senai/dados/estado/:uf', function(request, response){
-    /*
-        Para receber dados diretamente do front, utilizamos no nome do Endpoint o ':', isso indica que será
-        criado uma variável, o nome da variável é o que escrevemos logo após o ':'
-    */
-   let sigla = request.params.uf
-   let estado = estadosCidades.getDadosEstados(sigla)
-   response.json(estado)
-   response.status(200)
+    response.status(200)
+    response.json(docAPI)
 })
 
 /*
