@@ -200,17 +200,8 @@ app.get('/v1/senai/help', function(request, response){
 /*
     Tem como utilidade incializar a API para receber requisições (Deixar a API escutando a requisição),
     o 8080 é a porta de inicialização da API, como é uma função de callBack, é necessário fazer uma função.
-        app.listen(8080, function(){
-        console.log("API funcionando e aguardando novas requisições...")
-        })
 */
 
-//Porta dinâmica do Render ou a 8080 localmente
-const PORT = process.env.PORT || 8080;
-
-//Ignore as travas locais e escute qualquer IP que tentar se conectar a esta porta
-const HOST = '0.0.0.0';
-
-app.listen(PORT, HOST, function(){
-    console.log(`API de Estados e Cidades funcionando em http://${HOST}:${PORT}`);
-});
+app.listen(8080, function(){
+    console.log("API funcionando e aguardando novas requisições...")
+    })
