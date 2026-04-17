@@ -1,0 +1,50 @@
+    A partir de agora, utilizaremos a estrutura MVC para os próximos projetos, sendo: MVC -> model view controller:
+    model       -> Modelagem do banco de dados, criação das classes, é onde iremos armazenar todos os dados referentes ao BD
+    view        -> Interface, integração do fronEnd com o backEnd
+    Controller  -> Regra de negócio, onde iremos fazer a validação de dados e a conversão de tipos de dados no controller
+    para simplificar o arquivo app.js
+
+1. Model (O Cérebro e os Dados)
+    O Model não sabe que o usuário existe; ele só entende de regras e dados.
+
+O que faz: Gerencia o estado da aplicação. Ele lê o banco de dados, valida se a informação faz sentido (ex: "idade não pode ser negativa") e salva as alterações.
+
+Analogia: É o Cozinheiro. Ele sabe onde estão os ingredientes (banco de dados) e como preparar o prato (regras de negócio), mas nunca sai da cozinha para falar com o cliente.
+
+2. View (A Cara do Projeto)
+    A View é a camada de apresentação. Ela apenas exibe o que o Controller manda e captura as ações do usuário.
+
+O que faz: Exibe botões, tabelas, textos e formulários. Em sistemas modernos, pode ser o seu código HTML/CSS ou o JSON que vai para o Front-End.
+
+Analogia: É o Cardápio e a Mesa. É o que o cliente vê e onde ele escolhe o que quer.
+
+3. Controller (O Maestro/Intermediário)
+    O Controller é quem "manda" nos outros dois. Ele recebe a requisição, decide o que fazer e coordena a resposta.
+
+O que faz: Escuta os cliques na View, pede os dados para o Model e, quando o Model responde, ele decide qual View mostrar ao usuário.
+
+Analogia: É o Garçom. Ele anota o seu pedido (View), leva para o cozinheiro (Model), espera a comida ficar pronta e traz de volta para você na mesa (View).
+
+4. Por que usar isso em vez de deixar tudo no app.js?
+    Se você colocar tudo em um arquivo só, conforme o projeto cresce, fica impossível achar um erro. Com MVC, você tem Separação de Preocupações:
+
+Facilidade na Manutenção: Se você quiser trocar o banco de dados de MySQL para MongoDB, você mexe apenas no Model. A interface (View) nem fica sabendo.
+
+Reutilização: Você pode ter uma View para Web e outra para Mobile, usando o mesmo Controller e Model.
+
+Testes: É muito mais fácil testar se a lógica de cálculo está certa se ela estiver isolada no Model, sem precisar abrir um navegador.
+
+
+DAO -> Objeto de acesso a dados
+    -> O DAO é um diretório responsável por armazenar todas as tabelas do banco de dados, cada tabela é um objeto, portanto,
+    deve estar localizado dentro desse diretório.
+    -> O diretório database armazena os arquivos referentes ao banco de dados (modelagem lógica e os scripts), é algo opcional.
+    -> Para cada objeto presente no diretório DAO, teremos um um diretório no controller pertencente aquele objeto, pois é
+    necessário tratar os dados referentes a esse objeto.
+
+    Como fazemos a conexão do node com o banco de dados?
+    instalamos algumas dependências, dentre elas temos o express e o cors, as dependências
+    que podemos utilizar para se comunicar com o MySQL são: 
+    sequelize -> Foi a primeira dependência, porém não é recomendado por ser muito antiga 
+    prisma    -> É uma dependência atual, porém atualmente houve atualizações e tornaram a dependência meio instável, porém é muito recomendado
+    knex      -> Uma boa dependência, em testes de performance o knex apresentou mais performance que o prisma (recomendado pelo professor).
