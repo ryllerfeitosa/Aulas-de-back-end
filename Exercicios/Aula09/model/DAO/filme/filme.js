@@ -26,36 +26,43 @@ const knexConex = knex(knexConfig.development)
 
 //Função para inserir dados na tabela de filme
 const insertFilme = async function(filme){
-    let sql = `insert into tbl_filme(
-                                nome, 
-                                data_lancamento, 
-                                duracao, 
-                                sinopse, 
-                                avaliacao, 
-                                valor, 
-                                capa
-                                )
-                values ('${filme.nome}', 
-		                '${filme.data_lancamento}', 
-                        '${filme.duracao}', 
-                        '${filme.sinopse}',
-                        '${filme.avaliacao}',
-                        '${filme.valor}',
-                        '${filme.capa}'
-                );`
+    try {
+        let sql = `insert into tbl_filme(
+                                    nome, 
+                                    data_lancamento, 
+                                    duracao, 
+                                    sinopse, 
+                                    avaliacao, 
+                                    valor, 
+                                    capa
+                                    )
+                    values ('${filme.nome}', 
+                            '${filme.data_lancamento}', 
+                            '${filme.duracao}', 
+                            '${filme.sinopse}',
+                            if('${filme.avaliacao}' = '', null, '${filme.avaliacao}'),
+                            '${filme.valor}',
+                            '${filme.capa}'
+                    );`
 
-    //Executar o scriptSQL no banco de dados
-    let result = await knexConex.raw(sql)
-    /*
-        O await é importante pois a API manda uma solicitação para o banco de dados,
-        porém o BD leva um tempo para processar e enviar uma resposta, logo, é importante
-        adicionar para aguardar uma resposta do banco de acordo com a solicitação que foi feita  
-    */
-    if(result)
-        return true
-    else
-        return false
+        //Executar o scriptSQL no banco de dados
+        let result = await knexConex.raw(sql)
+        /*
+            O await é importante pois a API manda uma solicitação para o banco de dados,
+            porém o BD leva um tempo para processar e enviar uma resposta, logo, é importante
+            adicionar para aguardar uma resposta do banco de acordo com a solicitação que foi feita  
+        */
+        if(result)
+            return true
+        else
+            return false
+        } catch (error) {
+            //Para conseguirmos visualizar os erros
+            //console.log(error)
+            return false
+        }
 }
+
 
 //Função para atualizar um filme existente na tabela
 const updateFilme = async function(filme){
@@ -64,12 +71,37 @@ const updateFilme = async function(filme){
 
 //Função para retornar todos os dados da tabela de filme 
 const selectAllFilme = async function(){
+    try {
+        //Comando do BD para selecionar os filmes pertencentes a tbl_filme, o desc é um forma de deixar a visualização em forma decrescente 
+        let sql = `select * from tbl_filme order by id desc`
 
+        //Aguardando a resposta do BD
+        let result = await knexConex.raw(sql)
+        //Verificando se o knex retornou um array
+        if(Array.isArray(result)){
+            //Retornar somente os objetos criados através dos atributos referentes a entidade tbl_filme
+            return result[0]
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
 }
 
 //Função para retornar os dados do filme filtrando pelo id
 const selectByIdFilme = async function(id){
-
+    try {
+        //Comando de banco para buscar o id (int) tendo como parâmetro o id solicitado na função
+        let sql     = `select * from tbl_filme where id=${id}`
+        let result  = await knexConex.raw(sql)
+        if(Array.isArray(result)){
+            return result[0]
+        }else
+            return false
+    } catch (error) {
+        return false
+    }
 }
 
 //Função para excluir um filme pelo id

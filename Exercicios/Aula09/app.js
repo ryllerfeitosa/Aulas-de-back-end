@@ -38,7 +38,22 @@ app.use(cors(corsOptions))
 app.post('/v1/senai/locadora/filme', bodyParserJson, async function(request, response){
     //Recebe o conteúdo dentro do body da requisição (Abrindo o envelope e guardando o conteúdo da requisição)
     let dados = request.body
-    let result = await controllerFilme.inserirNovoFilme(dados)
+    let contentType = request.headers['content-type']
+    let result = await controllerFilme.inserirNovoFilme(dados, contentType)
+    response.status(result.status_code)
+    response.json(result)
+})
+
+app.get('/v1/senai/locadora/filme', async function(request, response){
+    let result = await controllerFilme.listarFilme()
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//Só é utilizado a busca via parâmetro quando o critério de filtro for o id, nas demais ocasiões é via query
+app.get('/v1/senai/locadora/filme/:id', async function(request, response){
+    let id = request.params.id
+    let result = await controllerFilme.buscarFilme(id)
     response.status(result.status_code)
     response.json(result)
 })
