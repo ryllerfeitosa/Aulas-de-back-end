@@ -55,8 +55,45 @@ const inserirNovoFilme = async function (filme, contentType) {
 }
 
 //Função para atualizar um filme
-const atualizarFilme = async function () {
+const atualizarFilme = async function (filme, id, contentType) {
+    //Criando um clone do objeto JSON para manipular a sua estrutura local sem modificar a estrutura original
+    let message = JSON.parse(JSON.stringify(config_message))
+    try {
+        //Validação do contentType para receber apenas JSON
+        if(String(contentType).toUpperCase() == 'APPLICATION/JSON'){
+            //Validação para o ID incorreto
+            let resultBuscarID = await buscarFilme(id)
+            /*  Se a função buscar encontrar o filme o atributo do JSON será verdadeiro
+                Isso significa que o filme existe na base, caso não retorne true, então
+                o retorno da função poderá ser um 400 ou 404 ou até mesmo um 500
+            */
+            if(resultBuscarID.status){
+                let validar = await validarDados(filme, contentType)
+                //Validação de campos obrigatórios para a atualização (Body)
+                if(!validar){
+                    //Adicionando o atributo ID do filme no JSON para ser enviado ao DAO
+                    filme.id = id
+                    //Chama a função do DAO para atualizar o filme (dados e o ID)
+                    let result = await filmeDAO.updateFilme(filme)
+                    if(result){
+                        message.DEFAULT_MESSAGE.status      = message.SUCESS_UPDATE_ITEM.status
+                        message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
+                        message.DEFAULT_MESSAGE.message     = message.SUCESS_UPDATE_ITEM.message
 
+                        return message.DEFAULT_MESSAGE //200(atualizado)
+                    }else{
+                        return message.ERROR_INTERNAL_SERVER_MODEL //500
+                    }
+                }else
+                    return validar //400
+            }else{
+                return resultBuscarID //404
+            }
+        }else
+            return message.ERROR_CONTENT_TYPE //415(ContentType)
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER //500(controller)
+    }
 }
 
 //Função para retornar todos os filmes
@@ -114,8 +151,27 @@ const buscarFilme = async function (id) {
 }
 
 //Função para excluir um filme
-const excluirFilme = async function () {
+const excluirFilme = async function (id) {
+    //Criando um clone do objeto JSON para manipular a sua estrutura local sem modificar a estrutura original
+    let message = JSON.parse(JSON.stringify(config_message))
+    try {
+        let resultBuscarId = await buscarFilme(id)
+        if(resultBuscarId.status){
+            let result = await filmeDAO.deletefilme(id)
+            if(result){
+                message.DEFAULT_MESSAGE.status      = message.SUCESS_DELETE_ITEM.status
+                message.DEFAULT_MESSAGE.status_code = message.SUCESS_DELETE_ITEM.status_code
+                message.DEFAULT_MESSAGE.message     = message.SUCESS_DELETE_ITEM.message
 
+                return message.DEFAULT_MESSAGE
+            }else
+                return message.ERROR_INTERNAL_SERVER_MODEL //500         
+        }else{
+            return resultBuscarId //404 (não encontrado) 400 (erro de requisição) 500 (banco de dados) 500 (controller)
+        }
+    } catch (error) {
+        return message.DEFAULT_MESSAGE.ERROR_INTERNAL_SERVER_CONTROLLER //500 (controller)
+    }
 }
 
 //Função para validar todos os dados de filme (obrigatórios, quantidade de caracteres, etc)
@@ -145,7 +201,7 @@ const validarDados = async function (filme, contentType) {
         } else if (filme.valor == '' || filme.valor == null || filme.valor == undefined || isNaN(filme.valor) || filme.valor.split('.')[0].length > 3) {
             message.ERROR_BAD_REQUEST.field = '[VALOR] INVÁLIDO'
             return message.ERROR_BAD_REQUEST
-        } else if (filme.capa.length > 5) {
+        } else if (filme.capa.length > 255) {
             message.ERROR_BAD_REQUEST.field = '[CAPA] INVÁLIDO'
             return message.ERROR_BAD_REQUEST
         } else
@@ -158,5 +214,7 @@ const validarDados = async function (filme, contentType) {
 module.exports = {
     inserirNovoFilme,
     listarFilme,
-    buscarFilme
+    buscarFilme,
+    atualizarFilme,
+    excluirFilme
 }

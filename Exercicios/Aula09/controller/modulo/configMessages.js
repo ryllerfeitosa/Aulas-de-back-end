@@ -41,6 +41,13 @@ const SUCCESS_CREATED_ITEM = {  status: true,
 const SUCCESS_RESPONSE     = {  status: true, 
                                 status_code: 200}
 
+const SUCESS_UPDATE_ITEM   = {  status: true,
+                                status_code: 200,
+                                message: 'Registro atualizado com sucesso'}
+const SUCESS_DELETE_ITEM   = {  status: true,
+                                status_code: 200,
+                                message: 'Registro deletado com sucesso'}
+
 module.exports = {
     DEFAULT_MESSAGE,
     ERROR_BAD_REQUEST,
@@ -49,5 +56,7 @@ module.exports = {
     ERROR_INTERNAL_SERVER_CONTROLLER,
     SUCCESS_CREATED_ITEM,
     SUCCESS_RESPONSE,
-    ERROR_NOT_FOUND
+    ERROR_NOT_FOUND,
+    SUCESS_UPDATE_ITEM,
+    SUCESS_DELETE_ITEM
 }
