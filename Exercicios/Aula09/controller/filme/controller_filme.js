@@ -44,6 +44,7 @@ const inserirNovoFilme = async function (filme, contentType) {
                 message.DEFAULT_MESSAGE.status = message.SUCCESS_CREATED_ITEM.status
                 message.DEFAULT_MESSAGE.status_code = message.SUCCESS_CREATED_ITEM.status_code
                 message.DEFAULT_MESSAGE.message = message.SUCCESS_CREATED_ITEM.message
+                message.DEFAULT_MESSAGE.response = filme
             } else {      //500
                 return message.ERROR_INTERNAL_SERVER_MODEL
             }
@@ -79,7 +80,7 @@ const atualizarFilme = async function (filme, id, contentType) {
                         message.DEFAULT_MESSAGE.status      = message.SUCESS_UPDATE_ITEM.status
                         message.DEFAULT_MESSAGE.status_code = message.SUCESS_UPDATE_ITEM.status_code
                         message.DEFAULT_MESSAGE.message     = message.SUCESS_UPDATE_ITEM.message
-
+                        message.DEFAULT_MESSAGE.response    = filme
                         return message.DEFAULT_MESSAGE //200(atualizado)
                     }else{
                         return message.ERROR_INTERNAL_SERVER_MODEL //500

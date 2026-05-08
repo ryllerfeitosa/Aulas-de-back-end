@@ -53,7 +53,7 @@ const insertFilme = async function(filme){
             adicionar para aguardar uma resposta do banco de acordo com a solicitação que foi feita  
         */
         if(result)
-            return true
+            return result[0].insertId
         else
             return false
         } catch (error) {
